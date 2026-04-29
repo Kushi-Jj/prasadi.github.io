@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — Jeevan Jayasuriya</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .blog-card {
+      background:var(--white); border:1px solid var(--border);
+      border-radius:var(--radius); overflow:hidden;
+      text-decoration:none; display:block;
+      transition:transform 0.22s, box-shadow 0.22s;
+    }
+    .blog-card:hover { transform:translateY(-4px); box-shadow:0 16px 40px rgba(15,27,53,0.1); }
+    .blog-thumb {
+      height:140px; display:flex; align-items:center;
+      justify-content:center; font-size:2.8rem;
+    }
+    .blog-body { padding:1.35rem; }
+    .blog-tag { font-size:0.68rem; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); margin-bottom:0.4rem; }
+    .blog-title { font-size:0.97rem; font-weight:500; color:var(--navy); line-height:1.45; margin-bottom:0.45rem; }
+    .blog-excerpt { font-size:0.83rem; color:var(--text-mid); line-height:1.65; margin-bottom:0.75rem; }
+    .blog-meta { font-size:0.75rem; color:var(--text-muted); display:flex; gap:12px; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Jeevan Jayasuriya</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="research.html">Research</a>
+    <a href="publications.html">Publications</a>
+    <a href="teaching.html">Teaching</a>
+    <a href="activities.html">Activities</a>
+    <a href="blog.html">Blog</a>
+    <a href="cv.html">CV</a>
+  </div>
+  <button class="nav-toggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="page">
+
+  <!-- Header -->
+  <div style="background:linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%); padding:3.5rem 0 3rem;">
+    <div class="container">
+      <p class="section-label" style="color:var(--gold-lt);">Blog</p>
+      <h1 style="font-family:'DM Serif Display',serif; font-size:2.4rem; color:#fff; line-height:1.2; margin-bottom:0.75rem;">Writing &amp; Thoughts</h1>
+      <p style="color:rgba(255,255,255,0.65); font-size:0.93rem; max-width:520px;">
+        Thoughts on research, neuroergonomics, space exploration, PhD life, and engineering. Written for a broad audience.
+      </p>
+    </div>
+  </div>
+
+  <!-- Blog Posts -->
+  <div class="section">
+    <div class="container">
+
+      <!-- Featured post -->
+      <div style="margin-bottom:2.5rem;">
+        <h2 style="font-size:0.72rem; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:1rem;">Featured</h2>
+        <a href="#" class="blog-card" style="display:grid; grid-template-columns:280px 1fr;">
+          <div class="blog-thumb" style="background:linear-gradient(135deg, #0f1b35, #2563a8); height:100%; min-height:180px;">🧠</div>
+          <div class="blog-body" style="padding:2rem;">
+            <div class="blog-tag">Research</div>
+            <div class="blog-title" style="font-size:1.15rem; margin-bottom:0.6rem;">What is Neuroergonomics, and Why Does It Matter?</div>
+            <div class="blog-excerpt">Replace this with a real excerpt or summary of your post. Introduce the concept, why it excites you, and what readers will learn. Keep it to 2–3 sentences.</div>
+            <div class="blog-meta">
+              <span>Add date</span>
+              <span>· 5 min read</span>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Post grid -->
+      <h2 style="font-size:0.72rem; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:1rem;">All Posts</h2>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem;">
+
+        <a href="#" class="blog-card">
+          <div class="blog-thumb" style="background:linear-gradient(135deg, #1a3a2a, #2e7a50);">🛸</div>
+          <div class="blog-body">
+            <div class="blog-tag">Space</div>
+            <div class="blog-title">Human Factors in Long-Duration Spaceflight</div>
+            <div class="blog-excerpt">Replace with your post excerpt here.</div>
+            <div class="blog-meta"><span>Add date</span><span>· 6 min read</span></div>
+          </div>
+        </a>
+
+        <a href="#" class="blog-card">
+          <div class="blog-thumb" style="background:linear-gradient(135deg, #3a1a35, #7a3a70);">📖</div>
+          <div class="blog-body">
+            <div class="blog-tag">PhD Life</div>
+            <div class="blog-title">Lessons from My First Two Years as a PhD Student</div>
+            <div class="blog-excerpt">Replace with your post excerpt here.</div>
+            <div class="blog-meta"><span>Add date</span><span>· 4 min read</span></div>
+          </div>
+        </a>
+
+        <a href="#" class="blog-card">
+          <div class="blog-thumb" style="background:linear-gradient(135deg, #1a2a3a, #2a5a7a);">🤖</div>
+          <div class="blog-body">
+            <div class="blog-tag">Engineering</div>
+            <div class="blog-title">How I Got into Exoskeleton Research</div>
+            <div class="blog-excerpt">Replace with your post excerpt here.</div>
+            <div class="blog-meta"><span>Add date</span><span>· 5 min read</span></div>
+          </div>
+        </a>
+
+        <a href="#" class="blog-card">
+          <div class="blog-thumb" style="background:linear-gradient(135deg, #2a2a1a, #7a6a20);">🌍</div>
+          <div class="blog-body">
+            <div class="blog-tag">Personal</div>
+            <div class="blog-title">From Sri Lanka to Madison: My Academic Journey</div>
+            <div class="blog-excerpt">Replace with your post excerpt here.</div>
+            <div class="blog-meta"><span>Add date</span><span>· 7 min read</span></div>
+          </div>
+        </a>
+
+        <a href="#" class="blog-card">
+          <div class="blog-thumb" style="background:linear-gradient(135deg, #1a1a2a, #3a3a7a);">📡</div>
+          <div class="blog-body">
+            <div class="blog-tag">Research</div>
+            <div class="blog-title">Making Sense of EMG Signals in Noisy Environments</div>
+            <div class="blog-excerpt">Replace with your post excerpt here.</div>
+            <div class="blog-meta"><span>Add date</span><span>· 6 min read</span></div>
+          </div>
+        </a>
+
+        <a href="#" class="blog-card">
+          <div class="blog-thumb" style="background:linear-gradient(135deg, #1a3a1a, #3a7a3a);">🔬</div>
+          <div class="blog-body">
+            <div class="blog-tag">Research</div>
+            <div class="blog-title">Add your next blog post title here</div>
+            <div class="blog-excerpt">Replace with your post excerpt here.</div>
+            <div class="blog-meta"><span>Coming soon</span></div>
+          </div>
+        </a>
+
+      </div>
+
+      <!-- Note -->
+      <div style="margin-top:2.5rem; text-align:center; padding:1.5rem; background:var(--surface); border-radius:var(--radius); border:1px solid var(--border);">
+        <p style="font-size:0.85rem; color:var(--text-muted);">
+          💡 <strong style="color:var(--text-mid);">How to add blog posts:</strong> Replace the placeholder cards above with your real posts. For each post, create a new HTML file (e.g., <code>blog-post-1.html</code>) and link to it from the <code>href="#"</code> in each card.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2025 Jeevan Jayasuriya · PhD Researcher, University of Wisconsin–Madison</p>
+  <div class="footer-links">
+    <a href="mailto:jayasuriyaar@wisc.edu">Email</a>
+    <a href="https://github.com/JeevanRJ" target="_blank">GitHub</a>
+    <a href="https://www.linkedin.com/in/jeevanjayasuriya" target="_blank">LinkedIn</a>
+    <a href="https://scholar.google.com/citations?user=gYFDPv8AAAAJ&hl=en" target="_blank">Google Scholar</a>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
