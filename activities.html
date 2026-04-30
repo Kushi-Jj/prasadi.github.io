@@ -57,9 +57,9 @@
       padding: 5px 12px; border-radius: 20px;
       margin-top: 0.85rem;
     }
-    .award-tag a { color: #8a5c10 !important; }
+    .award-tag a { color: #8a5c10 !important; text-decoration: underline; }
 
-    /* ── Photo Gallery Toggle ── */
+    /* ── Toggle Button ── */
     .gallery-toggle {
       display: flex; align-items: center; gap: 8px;
       width: 100%; padding: 0.85rem 2rem;
@@ -71,60 +71,87 @@
       font-family: inherit;
     }
     .gallery-toggle:hover { background: #e8f0fa; color: var(--accent); }
-    .gallery-toggle .toggle-icon {
-      margin-left: auto; font-size: 0.75rem;
-      transition: transform 0.25s;
-    }
-    .gallery-toggle.open .toggle-icon { transform: rotate(180deg); }
     .gallery-toggle.open { color: var(--accent); background: #eef4fc; }
+    .toggle-icon { margin-left: auto; font-size: 0.75rem; transition: transform 0.25s; }
+    .gallery-toggle.open .toggle-icon { transform: rotate(180deg); }
 
-    /* ── Photo Grid ── */
+    /* ── Panel ── */
     .gallery-panel {
       display: none;
-      padding: 1.5rem 2rem;
+      padding: 1.75rem 2rem;
       border-top: 1px solid var(--border);
       background: var(--surface);
     }
     .gallery-panel.open { display: block; }
 
+    /* ── Panel Section Label ── */
+    .panel-label {
+      font-size: 0.68rem; font-weight: 500; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--text-muted);
+      margin-bottom: 0.85rem; margin-top: 1.5rem;
+    }
+    .panel-label:first-child { margin-top: 0; }
+
+    /* ── Responsive Slide Embed ── */
+    .slide-wrap {
+      position: relative; width: 100%; padding-top: 56.25%;
+      border-radius: var(--radius); overflow: hidden;
+      border: 1px solid var(--border);
+      background: #f0f2f8;
+      margin-bottom: 1rem;
+    }
+    .slide-wrap iframe {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%; border: none;
+    }
+    .slide-caption {
+      font-size: 0.78rem; color: var(--text-muted);
+      margin-bottom: 1.5rem; margin-top: -0.5rem;
+      font-style: italic;
+    }
+
+    /* ── Poster Image ── */
+    .poster-wrap {
+      border-radius: var(--radius); overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      max-width: 640px;
+      cursor: pointer;
+    }
+    .poster-wrap img {
+      width: 100%; display: block;
+      transition: transform 0.3s;
+    }
+    .poster-wrap:hover img { transform: scale(1.01); }
+    .poster-caption {
+      font-size: 0.75rem; color: var(--text-muted);
+      margin-top: 0.5rem; font-style: italic;
+    }
+
+    /* ── Photo Grid ── */
     .photo-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 0.85rem;
     }
     .photo-item {
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-      aspect-ratio: 4/3;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      cursor: pointer;
-      position: relative;
+      border-radius: var(--radius-sm); overflow: hidden;
+      aspect-ratio: 4/3; background: var(--surface2);
+      border: 1px solid var(--border); cursor: pointer;
     }
     .photo-item img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      transition: transform 0.3s;
-      display: block;
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.3s; display: block;
     }
     .photo-item:hover img { transform: scale(1.04); }
-
-    /* Placeholder when no photo uploaded yet */
     .photo-placeholder {
       width: 100%; height: 100%;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       gap: 6px; color: var(--text-muted);
-      font-size: 0.75rem; text-align: center;
-      padding: 1rem;
+      font-size: 0.72rem; text-align: center; padding: 1rem;
     }
     .photo-placeholder span { font-size: 1.6rem; }
-
-    .gallery-caption {
-      font-size: 0.78rem; color: var(--text-muted);
-      margin-top: 0.85rem;
-      line-height: 1.6;
-    }
 
     /* ── Lightbox ── */
     .lightbox {
@@ -187,7 +214,9 @@
   <div class="section">
     <div class="container">
 
-      <!-- ══ ASPIRE HFES 2025 ══ -->
+      <!-- ══════════════════════════════
+           ASPIRE HFES 2025
+      ══════════════════════════════ -->
       <div class="activity-card">
         <div class="activity-card-top">
           <div class="activity-year-badge">2025 · Conference</div>
@@ -203,36 +232,53 @@
           </div>
         </div>
 
-        <!-- Photo toggle -->
         <button class="gallery-toggle" onclick="toggleGallery(this)">
-          📸 Photos from HFES 2025
+          📊 View Presentations & Photos
           <span class="toggle-icon">▼</span>
         </button>
         <div class="gallery-panel">
-          <div class="photo-grid">
 
-            <!-- Replace src="#" with your actual image paths e.g. src="images/hfes2025-1.jpg" -->
-            <div class="photo-item" onclick="openLightbox(this)">
-              <img src="images/hfes2025-1.jpg" alt="HFES 2025 presentation"
-                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>Add photo:<br>images/hfes2025-1.jpg</div>'">
-            </div>
-            <div class="photo-item" onclick="openLightbox(this)">
-              <img src="images/hfes2025-2.jpg" alt="HFES 2025 award"
-                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>Add photo:<br>images/hfes2025-2.jpg</div>'">
-            </div>
-            <div class="photo-item" onclick="openLightbox(this)">
-              <img src="images/hfes2025-3.jpg" alt="HFES 2025 team"
-                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>Add photo:<br>images/hfes2025-3.jpg</div>'">
-            </div>
-
+          <!-- Slide 1 -->
+          <div class="panel-label">Presentation 1 — Vestibular Impairments, Postural Balance &amp; Neural Activation</div>
+          <div class="slide-wrap">
+            <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vR_JUHrePqcQnRrta_iIHXpmT9fe7AtvPUA4Ccl8i7gzEEo__5uwXSTkdoPkAiWfQ/pubembed?start=false&loop=true&delayms=3000"
+              allowfullscreen mozallowfullscreen webkitallowfullscreen>
+            </iframe>
           </div>
-          <p class="gallery-caption">
-            💡 <strong>To add photos:</strong> Upload your images to the <code>images/</code> folder in your GitHub repo and name them <code>hfes2025-1.jpg</code>, <code>hfes2025-2.jpg</code>, etc. They'll appear here automatically.
-          </p>
+          <p class="slide-caption">GVS &amp; fNIRS neuroimaging — postural balance under vestibular impairments</p>
+
+          <!-- Slide 2 -->
+          <div class="panel-label">Presentation 2 — Fine Motor Coordination Under Spaceflight-Analog Conditions</div>
+          <div class="slide-wrap">
+            <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vR5mdQdzsFyFe0PTORhrB9_uw-BB23Nyr1iwDuch1V-ANN8Lit8dsBHpk1WxwVZXA/pubembed?start=false&loop=true&delayms=3000"
+              allowfullscreen mozallowfullscreen webkitallowfullscreen>
+            </iframe>
+          </div>
+          <p class="slide-caption">Interacting effects of vestibular impairments and mental fatigue on fine motor performance</p>
+
+          <!-- Photos -->
+          <div class="panel-label">Photos</div>
+          <div class="photo-grid">
+            <div class="photo-item" onclick="openLightbox(this)">
+              <img src="images/hfes2025-1.jpg" alt="HFES 2025"
+                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>images/hfes2025-1.jpg</div>'">
+            </div>
+            <div class="photo-item" onclick="openLightbox(this)">
+              <img src="images/hfes2025-2.jpg" alt="HFES 2025"
+                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>images/hfes2025-2.jpg</div>'">
+            </div>
+            <div class="photo-item" onclick="openLightbox(this)">
+              <img src="images/hfes2025-3.jpg" alt="HFES 2025"
+                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>images/hfes2025-3.jpg</div>'">
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <!-- ══ NASA IWS 2025 ══ -->
+      <!-- ══════════════════════════════
+           NASA IWS 2025
+      ══════════════════════════════ -->
       <div class="activity-card">
         <div class="activity-card-top">
           <div class="activity-year-badge">2025 · Conference</div>
@@ -244,29 +290,41 @@
         </div>
 
         <button class="gallery-toggle" onclick="toggleGallery(this)">
-          📸 Photos from NASA IWS 2025
+          🗂 View Poster &amp; Photos
           <span class="toggle-icon">▼</span>
         </button>
         <div class="gallery-panel">
-          <div class="photo-grid">
 
+          <!-- Poster -->
+          <div class="panel-label">Research Poster</div>
+          <div class="poster-wrap" onclick="openLightbox(this)">
+            <img src="images/IWS_poster.jpg" alt="NASA IWS 2025 Poster"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding:2rem; text-align:center; color:var(--text-muted); font-size:0.85rem;">
+              📄 Upload your poster as <code>images/IWS_poster.jpg</code> in your GitHub repo
+            </div>
+          </div>
+          <p class="poster-caption">Click the poster to view full size</p>
+
+          <!-- Photos -->
+          <div class="panel-label">Photos</div>
+          <div class="photo-grid">
             <div class="photo-item" onclick="openLightbox(this)">
               <img src="images/nasa-iws-1.jpg" alt="NASA IWS 2025"
-                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>Add photo:<br>images/nasa-iws-1.jpg</div>'">
+                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>images/nasa-iws-1.jpg</div>'">
             </div>
             <div class="photo-item" onclick="openLightbox(this)">
               <img src="images/nasa-iws-2.jpg" alt="NASA IWS 2025"
-                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>Add photo:<br>images/nasa-iws-2.jpg</div>'">
+                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>images/nasa-iws-2.jpg</div>'">
             </div>
-
           </div>
-          <p class="gallery-caption">
-            💡 Upload images named <code>nasa-iws-1.jpg</code>, <code>nasa-iws-2.jpg</code> to your <code>images/</code> folder.
-          </p>
+
         </div>
       </div>
 
-      <!-- ══ ASPIRE HFES 2024 ══ -->
+      <!-- ══════════════════════════════
+           ASPIRE HFES 2024
+      ══════════════════════════════ -->
       <div class="activity-card">
         <div class="activity-card-top">
           <div class="activity-year-badge">2024 · Conference</div>
@@ -281,33 +339,33 @@
         </div>
 
         <button class="gallery-toggle" onclick="toggleGallery(this)">
-          📸 Photos from HFES 2024
+          📸 View Photos
           <span class="toggle-icon">▼</span>
         </button>
         <div class="gallery-panel">
-          <div class="photo-grid">
 
+          <div class="panel-label">Photos</div>
+          <div class="photo-grid">
             <div class="photo-item" onclick="openLightbox(this)">
               <img src="images/hfes2024-1.jpg" alt="HFES 2024"
-                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>Add photo:<br>images/hfes2024-1.jpg</div>'">
+                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>images/hfes2024-1.jpg</div>'">
             </div>
             <div class="photo-item" onclick="openLightbox(this)">
-              <img src="images/hfes2024-2.jpg" alt="HFES 2024 award"
-                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>Add photo:<br>images/hfes2024-2.jpg</div>'">
+              <img src="images/hfes2024-2.jpg" alt="HFES 2024"
+                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>images/hfes2024-2.jpg</div>'">
             </div>
             <div class="photo-item" onclick="openLightbox(this)">
-              <img src="images/hfes2024-3.jpg" alt="HFES 2024 team"
-                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>Add photo:<br>images/hfes2024-3.jpg</div>'">
+              <img src="images/hfes2024-3.jpg" alt="HFES 2024"
+                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>images/hfes2024-3.jpg</div>'">
             </div>
-
           </div>
-          <p class="gallery-caption">
-            💡 Upload images named <code>hfes2024-1.jpg</code>, <code>hfes2024-2.jpg</code>, etc. to your <code>images/</code> folder.
-          </p>
+
         </div>
       </div>
 
-      <!-- ══ ASB 2024 ══ -->
+      <!-- ══════════════════════════════
+           ASB 2024
+      ══════════════════════════════ -->
       <div class="activity-card">
         <div class="activity-card-top">
           <div class="activity-year-badge">2024 · Conference</div>
@@ -319,63 +377,73 @@
         </div>
 
         <button class="gallery-toggle" onclick="toggleGallery(this)">
-          📸 Photos from ASB 2024
+          🗂 View Poster &amp; Photos
           <span class="toggle-icon">▼</span>
         </button>
         <div class="gallery-panel">
-          <div class="photo-grid">
 
+          <!-- Poster -->
+          <div class="panel-label">Research Poster</div>
+          <div class="poster-wrap" onclick="openLightbox(this)">
+            <img src="images/ASB_poster.jpg" alt="ASB 2024 Poster"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding:2rem; text-align:center; color:var(--text-muted); font-size:0.85rem;">
+              📄 Upload your poster as <code>images/ASB_poster.jpg</code> in your GitHub repo
+            </div>
+          </div>
+          <p class="poster-caption">Click the poster to view full size</p>
+
+          <!-- Photos -->
+          <div class="panel-label">Photos</div>
+          <div class="photo-grid">
             <div class="photo-item" onclick="openLightbox(this)">
               <img src="images/asb2024-1.jpg" alt="ASB 2024"
-                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>Add photo:<br>images/asb2024-1.jpg</div>'">
+                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>images/asb2024-1.jpg</div>'">
             </div>
             <div class="photo-item" onclick="openLightbox(this)">
               <img src="images/asb2024-2.jpg" alt="ASB 2024"
-                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>Add photo:<br>images/asb2024-2.jpg</div>'">
+                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>images/asb2024-2.jpg</div>'">
             </div>
-
           </div>
-          <p class="gallery-caption">
-            💡 Upload images named <code>asb2024-1.jpg</code>, <code>asb2024-2.jpg</code> to your <code>images/</code> folder.
-          </p>
+
         </div>
       </div>
 
-      <!-- ══ Joined UW-Madison ══ -->
+      <!-- ══════════════════════════════
+           Joined UW-Madison
+      ══════════════════════════════ -->
       <div class="activity-card">
         <div class="activity-card-top">
           <div class="activity-year-badge">2023 · Milestone</div>
           <div class="activity-title">Joined UW–Madison</div>
           <div class="activity-location">📍 Madison, Wisconsin</div>
           <div class="activity-body">
-            <p>Following the successful completion of my M.S. in Mechanical Engineering at Clarkson University, I relocated to <a href="https://www.google.com/maps/place/Madison,+WI/@43.0852183,-89.4915483,12z" target="_blank">Madison, Wisconsin</a> in January and joined the <a href="https://neuroergolab.org/" target="_blank">Neuroergonomics Lab</a> at the <a href="https://www.wisc.edu/" target="_blank">University of Wisconsin–Madison</a> as a Ph.D. student in the Department of Industrial and Systems Engineering.</p>
+            <p>Following the successful completion of my M.S. in Mechanical Engineering at Clarkson University, I relocated to <a href="https://www.google.com/maps/place/Madison,+WI" target="_blank">Madison, Wisconsin</a> in January and joined the <a href="https://neuroergolab.org/" target="_blank">Neuroergonomics Lab</a> at the <a href="https://www.wisc.edu/" target="_blank">University of Wisconsin–Madison</a> as a Ph.D. student in the Department of Industrial and Systems Engineering.</p>
           </div>
         </div>
 
         <button class="gallery-toggle" onclick="toggleGallery(this)">
-          📸 Photos
+          📸 View Photos
           <span class="toggle-icon">▼</span>
         </button>
         <div class="gallery-panel">
+          <div class="panel-label">Photos</div>
           <div class="photo-grid">
-
             <div class="photo-item" onclick="openLightbox(this)">
               <img src="images/madison-1.jpg" alt="Madison Wisconsin"
-                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>Add photo:<br>images/madison-1.jpg</div>'">
+                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>images/madison-1.jpg</div>'">
             </div>
             <div class="photo-item" onclick="openLightbox(this)">
               <img src="images/madison-2.jpg" alt="Neuroergonomics Lab"
-                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>Add photo:<br>images/madison-2.jpg</div>'">
+                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>images/madison-2.jpg</div>'">
             </div>
-
           </div>
-          <p class="gallery-caption">
-            💡 Upload images named <code>madison-1.jpg</code>, <code>madison-2.jpg</code> to your <code>images/</code> folder.
-          </p>
         </div>
       </div>
 
-      <!-- ══ Graduated M.S. ══ -->
+      <!-- ══════════════════════════════
+           Graduated M.S.
+      ══════════════════════════════ -->
       <div class="activity-card">
         <div class="activity-card-top">
           <div class="activity-year-badge">2022 · Milestone</div>
@@ -387,36 +455,32 @@
         </div>
 
         <button class="gallery-toggle" onclick="toggleGallery(this)">
-          📸 Photos from Clarkson
+          📸 View Photos
           <span class="toggle-icon">▼</span>
         </button>
         <div class="gallery-panel">
+          <div class="panel-label">Photos</div>
           <div class="photo-grid">
-
             <div class="photo-item" onclick="openLightbox(this)">
               <img src="images/clarkson-1.jpg" alt="Clarkson graduation"
-                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>Add photo:<br>images/clarkson-1.jpg</div>'">
+                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>images/clarkson-1.jpg</div>'">
             </div>
             <div class="photo-item" onclick="openLightbox(this)">
               <img src="images/clarkson-2.jpg" alt="ASTRO Lab"
-                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>Add photo:<br>images/clarkson-2.jpg</div>'">
+                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>images/clarkson-2.jpg</div>'">
             </div>
             <div class="photo-item" onclick="openLightbox(this)">
               <img src="images/clarkson-3.jpg" alt="Exoskeleton project"
-                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>Add photo:<br>images/clarkson-3.jpg</div>'">
+                onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>🖼</span>images/clarkson-3.jpg</div>'">
             </div>
-
           </div>
-          <p class="gallery-caption">
-            💡 Upload images named <code>clarkson-1.jpg</code>, <code>clarkson-2.jpg</code>, etc. to your <code>images/</code> folder.
-          </p>
         </div>
       </div>
 
     </div>
   </div>
 
-</div>
+</div><!-- .page -->
 
 <footer>
   <p>© 2025 Jeevan Jayasuriya · PhD Researcher, University of Wisconsin–Madison</p>
@@ -430,24 +494,22 @@
 
 <script src="js/main.js"></script>
 <script>
-  // Toggle gallery panel
   function toggleGallery(btn) {
     btn.classList.toggle('open');
-    const panel = btn.nextElementSibling;
-    panel.classList.toggle('open');
+    btn.nextElementSibling.classList.toggle('open');
   }
 
-  // Lightbox
   function openLightbox(item) {
     const img = item.querySelector('img');
-    if (!img) return;
+    if (!img || img.naturalWidth === 0) return;
     document.getElementById('lightbox-img').src = img.src;
     document.getElementById('lightbox').classList.add('open');
   }
+
   function closeLightbox() {
     document.getElementById('lightbox').classList.remove('open');
   }
-  // Close lightbox on Escape key
+
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeLightbox();
   });
