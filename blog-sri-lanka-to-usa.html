@@ -23,9 +23,53 @@
     .post-nav a { font-size:0.83rem; color:var(--accent); text-decoration:none; }
     .post-nav a:hover { text-decoration:underline; }
     .emoji-section { font-size:1.1rem; margin-right:4px; }
+
+    /* ── Photo styles ── */
+    .photo-label {
+      font-size:0.68rem; font-weight:500; letter-spacing:2px;
+      text-transform:uppercase; color:var(--text-muted);
+      margin-bottom:0.75rem;
+    }
+    .photo-single { margin:1.75rem 0; }
+    .photo-item {
+      border-radius:var(--radius); overflow:hidden;
+      cursor:pointer; border:1px solid var(--border);
+      background:var(--surface2);
+    }
+    .photo-item img {
+      width:100%; display:block;
+      transition:transform 0.3s; max-height:420px;
+      object-fit:cover;
+    }
+    .photo-item:hover img { transform:scale(1.02); }
+    .photo-caption {
+      font-size:0.78rem; color:var(--text-muted);
+      margin-top:0.5rem; font-style:italic; text-align:center;
+    }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      display:none; position:fixed; inset:0; z-index:500;
+      background:rgba(0,0,0,0.9);
+      align-items:center; justify-content:center;
+    }
+    .lightbox.open { display:flex; }
+    .lightbox img { max-width:90vw; max-height:88vh; border-radius:10px; box-shadow:0 24px 80px rgba(0,0,0,0.5); }
+    .lb-close {
+      position:absolute; top:1.25rem; right:1.5rem;
+      background:none; border:none; color:#fff;
+      font-size:2rem; cursor:pointer; line-height:1;
+    }
   </style>
 </head>
 <body>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLb()">
+  <button class="lb-close" onclick="closeLb()">✕</button>
+  <img id="lb-img" src="" alt="">
+</div>
+
 <nav>
   <a href="index.html" class="nav-logo">Jeevan Jayasuriya</a>
   <div class="nav-links">
@@ -71,6 +115,24 @@
         <li>Planning even short trips outside</li>
       </ul>
 
+      <!-- ══════════════════════════════════════
+           PHOTO 1
+           Upload your image to GitHub as:
+           images/blog/srilanka/photo1.jpg
+           Then change the src below to match.
+           The image disappears silently if not found.
+      ══════════════════════════════════════ -->
+      <div class="photo-single">
+        <div class="photo-label">📷 Photo</div>
+        <div class="photo-item" onclick="openLb('images/blog/srilanka/photo1.jpg')">
+          <img
+            src="images/blog/srilanka/photo1.jpg"
+            alt="First impressions of the USA"
+            onerror="this.parentElement.parentElement.style.display='none'">
+        </div>
+        <p class="photo-caption">Add your caption here — e.g. "First winter in the USA"</p>
+      </div>
+
       <h2><span class="emoji-section">🌱</span> The Real Journey Begins</h2>
       <p>Slowly, reality set in. This wasn't just a new place — it was a completely new life.</p>
       <p>Everything had to be learned again: a different education system, communicating in English every day, managing time, studies, and responsibilities, living far from family support, and adjusting to a new culture and lifestyle.</p>
@@ -79,6 +141,24 @@
       <h2><span class="emoji-section">✨</span> Becoming Someone New</h2>
       <p>Little by little, things began to feel more familiar. Not the same as home — but something new, something I was building for myself.</p>
       <p>I realized this journey is not just about moving from one country to another. It's about stepping out of your comfort zone, facing challenges you never imagined, and slowly becoming a stronger version of yourself.</p>
+
+      <!-- ══════════════════════════════════════
+           PHOTO 2
+           Upload your image to GitHub as:
+           images/blog/srilanka/photo2.jpg
+           Then change the src below to match.
+           The image disappears silently if not found.
+      ══════════════════════════════════════ -->
+      <div class="photo-single">
+        <div class="photo-label">📷 Photo</div>
+        <div class="photo-item" onclick="openLb('images/blog/srilanka/photo2.jpg')">
+          <img
+            src="images/blog/srilanka/photo2.jpg"
+            alt="Building a new life in Madison"
+            onerror="this.parentElement.parentElement.style.display='none'">
+        </div>
+        <p class="photo-caption">Add your caption here — e.g. "Building a new life in Madison, WI"</p>
+      </div>
 
       <h2><span class="emoji-section">💭</span> Looking Back</h2>
       <p>If I could go back to that moment at the airport, I would still choose this path. Not because it is easy — but because it is worth it.</p>
@@ -101,6 +181,19 @@
     <a href="https://scholar.google.com/citations?user=gYFDPv8AAAAJ&hl=en" target="_blank">Google Scholar</a>
   </div>
 </footer>
+
 <script src="js/main.js"></script>
+<script>
+  function openLb(src) {
+    document.getElementById('lb-img').src = src;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLb() {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLb();
+  });
+</script>
 </body>
 </html>
