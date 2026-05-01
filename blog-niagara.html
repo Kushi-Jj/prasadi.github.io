@@ -28,9 +28,48 @@
     .day-title { font-size:1rem; font-weight:500; color:var(--navy); margin-bottom:0.6rem; }
     .tip-box { background:#fef3e2; border:1px solid #f0d49a; border-radius:var(--radius-sm); padding:1rem 1.25rem; margin:1.25rem 0; font-size:0.88rem; color:#7a5010; }
     .emoji-section { font-size:1.1rem; margin-right:4px; }
+
+    /* ── Photo styles ── */
+    .photo-wrap { margin:1.25rem 0 2rem; }
+    .photo-item {
+      border-radius:var(--radius); overflow:hidden;
+      cursor:pointer; border:1px solid var(--border);
+      background:var(--surface2);
+    }
+    .photo-item img {
+      width:100%; display:block;
+      max-height:400px; object-fit:cover;
+      transition:transform 0.3s;
+    }
+    .photo-item:hover img { transform:scale(1.02); }
+    .photo-caption {
+      font-size:0.76rem; color:var(--text-muted);
+      margin-top:0.45rem; font-style:italic; text-align:center;
+    }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      display:none; position:fixed; inset:0; z-index:500;
+      background:rgba(0,0,0,0.9);
+      align-items:center; justify-content:center;
+    }
+    .lightbox.open { display:flex; }
+    .lightbox img { max-width:90vw; max-height:88vh; border-radius:10px; box-shadow:0 24px 80px rgba(0,0,0,0.5); }
+    .lb-close {
+      position:absolute; top:1.25rem; right:1.5rem;
+      background:none; border:none; color:#fff;
+      font-size:2rem; cursor:pointer; line-height:1;
+    }
   </style>
 </head>
 <body>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLb()">
+  <button class="lb-close" onclick="closeLb()">✕</button>
+  <img id="lb-img" src="" alt="">
+</div>
+
 <nav>
   <a href="index.html" class="nav-logo">Jeevan Jayasuriya</a>
   <div class="nav-links">
@@ -58,26 +97,68 @@
       <p>There are some places you see in photos for years, and when you finally visit, they still manage to feel unreal. For me, Niagara Falls was exactly that kind of place.</p>
       <p>I went on this trip with my favorite person — my wife. Traveling with her always makes every place more meaningful, and this trip was no different. We spent two days exploring the Canadian side, and it turned into one of those trips that feels simple at the time, but becomes a lasting memory later.</p>
 
+      <!-- ══ DAY 1 — Toronto / Niagara Falls ══ -->
       <div class="day-card">
         <div class="day-label">Day 1</div>
         <div class="day-title"><span class="emoji-section">📍</span> Toronto → Niagara Falls</div>
         <p style="font-size:0.9rem; color:var(--text-mid); line-height:1.8; margin:0;">We started our journey in Toronto, a city full of life, modern buildings, and a beautiful waterfront atmosphere. After spending some time there, we drove toward Niagara Falls. The closer we got, the more excited we became — but nothing really prepares you for that first view. When we finally saw the falls, it honestly felt unreal. The sound, the mist, the power of the water — it's something you don't just "see," you feel it in your body.</p>
       </div>
 
+      <!-- Photo: upload as images/blog/niagara/falls.jpg -->
+      <div class="photo-wrap">
+        <div class="photo-item" onclick="openLb('images/blog/niagara/falls.jpg')">
+          <img src="images/blog/niagara/falls.jpg" alt="Niagara Falls first view"
+            onerror="this.parentElement.parentElement.style.display='none'">
+        </div>
+        <p class="photo-caption">That first view of Niagara Falls — nothing can prepare you for it</p>
+      </div>
+
+      <!-- ══ HORNBLOWER BOAT RIDE ══ -->
       <h2><span class="emoji-section">🚤</span> Hornblower Boat Ride Experience</h2>
       <p>One of the most unforgettable parts of the trip was the <strong>Hornblower Niagara Cruises</strong> boat ride. We wore the red ponchos and slowly moved closer and closer to the falls. Within minutes, everything turned into mist and water spray. It felt like standing inside a moving wall of water.</p>
       <p>The sound was loud, powerful, and overwhelming — in a good way. It's one of those experiences that makes you just stop thinking and fully live in the moment.</p>
+
+      <!-- Photo: upload as images/blog/niagara/boat-ride.jpg -->
+      <div class="photo-wrap">
+        <div class="photo-item" onclick="openLb('images/blog/niagara/boat-ride.jpg')">
+          <img src="images/blog/niagara/boat-ride.jpg" alt="Hornblower boat ride Niagara"
+            onerror="this.parentElement.parentElement.style.display='none'">
+        </div>
+        <p class="photo-caption">Hornblower Niagara Cruises — red ponchos, mist, and the roar of the falls</p>
+      </div>
+
       <div class="tip-box">💡 <strong>Tip:</strong> If you visit Niagara Falls, the Hornblower boat ride is something you should not miss — the red poncho experience is unforgettable.</div>
 
+      <!-- ══ EVENING ══ -->
       <h2><span class="emoji-section">🌆</span> Evening Around the Falls</h2>
       <p>The area around the falls is full of energy — restaurants, walking paths, attractions, and people from all over the world. In the evening, everything changed again. The falls lit up with colors, and the whole view became calm and almost dreamlike. We walked slowly, took photos, and just enjoyed the atmosphere without rushing anywhere.</p>
 
+      <!-- Photo: upload as images/blog/niagara/evening.jpg 
+      <div class="photo-wrap">
+        <div class="photo-item" onclick="openLb('images/blog/niagara/evening.jpg')">
+          <img src="images/blog/niagara/evening.jpg" alt="Niagara Falls lit up in the evening"
+            onerror="this.parentElement.parentElement.style.display='none'">
+        </div>
+        <p class="photo-caption">Niagara Falls at night — lit up with colors, calm and dreamlike</p>
+      </div> -->
+
+      <!-- ══ DAY 2 — Niagara-on-the-Lake ══ -->
       <div class="day-card">
         <div class="day-label">Day 2</div>
         <div class="day-title"><span class="emoji-section">🍇</span> Niagara-on-the-Lake</div>
         <p style="font-size:0.9rem; color:var(--text-mid); line-height:1.8; margin:0;">On the second day, we visited Niagara-on-the-Lake, a small and peaceful town not far from the falls. This place felt like a completely different world — quiet streets, flowers everywhere, small local shops, and a very relaxed atmosphere. It was the perfect contrast to the powerful energy of the falls. We walked around slowly, had simple moments together, and enjoyed how peaceful everything felt. A soft ending to an exciting trip.</p>
       </div>
 
+      <!-- Photo: upload as images/blog/niagara/notl.jpg -->
+      <div class="photo-wrap">
+        <div class="photo-item" onclick="openLb('images/blog/niagara/notl.jpg')">
+          <img src="images/blog/niagara/notl.jpg" alt="Niagara-on-the-Lake"
+            onerror="this.parentElement.parentElement.style.display='none'">
+        </div>
+        <p class="photo-caption">Niagara-on-the-Lake — quiet streets and a completely different world</p>
+      </div>
+
+      <!-- ══ FINAL THOUGHTS ══ -->
       <h2><span class="emoji-section">💙</span> Final Thoughts</h2>
       <p>This trip wasn't just about visiting a famous landmark. It was about traveling with my favorite person, experiencing nature at full power, slow walks and quiet conversations, and collecting small memories that stay longer than photos.</p>
       <p>From the busy feel of Toronto, to the powerful beauty of the Hornblower boat ride, and the calm charm of Niagara-on-the-Lake, every part of the journey felt balanced and meaningful.</p>
@@ -100,6 +181,19 @@
     <a href="https://scholar.google.com/citations?user=gYFDPv8AAAAJ&hl=en" target="_blank">Google Scholar</a>
   </div>
 </footer>
+
 <script src="js/main.js"></script>
+<script>
+  function openLb(src) {
+    document.getElementById('lb-img').src = src;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLb() {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLb();
+  });
+</script>
 </body>
 </html>
