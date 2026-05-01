@@ -25,9 +25,66 @@
     .spot-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem 1.5rem; margin:1.25rem 0; border-left:3px solid var(--accent); }
     .spot-card h3 { font-size:1rem; font-weight:500; color:var(--navy); margin-bottom:0.4rem; }
     .emoji-section { font-size:1.1rem; margin-right:4px; }
+
+    /* ── Photo styles ── */
+    .photo-label {
+      font-size:0.68rem; font-weight:500; letter-spacing:2px;
+      text-transform:uppercase; color:var(--text-muted);
+      margin-bottom:0.75rem; margin-top:1.25rem;
+    }
+
+    /* Single full-width photo */
+    .photo-single { margin:1.5rem 0; }
+    .photo-item {
+      border-radius:var(--radius); overflow:hidden;
+      cursor:pointer; border:1px solid var(--border);
+      background:var(--surface2);
+    }
+    .photo-item img {
+      width:100%; display:block;
+      transition:transform 0.3s;
+      max-height:400px; object-fit:cover;
+    }
+    .photo-item:hover img { transform:scale(1.02); }
+
+    /* Two photos side by side */
+    .photo-grid-2 {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:0.75rem; margin:1.5rem 0;
+    }
+    .photo-grid-2 .photo-item { margin:0; }
+    .photo-grid-2 .photo-item img { max-height:280px; }
+
+    .photo-caption {
+      font-size:0.76rem; color:var(--text-muted);
+      margin-top:0.45rem; font-style:italic; text-align:center;
+    }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      display:none; position:fixed; inset:0; z-index:500;
+      background:rgba(0,0,0,0.9);
+      align-items:center; justify-content:center;
+    }
+    .lightbox.open { display:flex; }
+    .lightbox img { max-width:90vw; max-height:88vh; border-radius:10px; box-shadow:0 24px 80px rgba(0,0,0,0.5); }
+    .lb-close {
+      position:absolute; top:1.25rem; right:1.5rem;
+      background:none; border:none; color:#fff;
+      font-size:2rem; cursor:pointer; line-height:1;
+    }
+
+    @media(max-width:600px) { .photo-grid-2 { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLb()">
+  <button class="lb-close" onclick="closeLb()">✕</button>
+  <img id="lb-img" src="" alt="">
+</div>
+
 <nav>
   <a href="index.html" class="nav-logo">Jeevan Jayasuriya</a>
   <div class="nav-links">
@@ -55,6 +112,11 @@
       <p>Living in Madison, Wisconsin has slowly changed the way I see everyday life. It's not just a city for me anymore — it feels like a balance between nature, water, quiet spaces, and focused work. Over time, it has also become the background of my PhD journey, shaping how I think, study, and reset.</p>
       <p>There are a few special places I keep going back to again and again. Each one gives me a different kind of peace — and that balance has been important while doing PhD work.</p>
 
+      <!-- ══════════════════════════════════════
+           PICNIC POINT — 2 photos side by side
+           Upload to: images/blog/madison/
+           picnic-point-1.jpg / picnic-point-2.jpg
+      ══════════════════════════════════════ -->
       <div class="spot-card">
         <h3><span class="emoji-section">🌅</span> Picnic Point — My Walking Escape Between Research Thoughts</h3>
         <p>One of my most peaceful spots is Picnic Point. It's a long, quiet stretch surrounded by water, trees, and open sky. I often go there when my PhD work feels heavy or when I get stuck thinking too much. Walking there helps me reset my mind.</p>
@@ -62,16 +124,55 @@
         <p>It reminds me that productivity is not only about sitting in front of a screen — it's also about stepping away.</p>
       </div>
 
+      <div class="photo-label">📷 Picnic Point</div>
+      <div class="photo-grid-2">
+        <div>
+          <div class="photo-item" onclick="openLb('images/blog/madison/picnic-point-1.jpg')">
+            <img src="images/blog/madison/picnic-point-1.jpg" alt="Picnic Point Madison"
+              onerror="this.parentElement.parentElement.style.display='none'">
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           MEMORIAL UNION — 1 photo (fog/mist)
+           Upload to: images/blog/madison/
+           memorial-union.jpg
+      ══════════════════════════════════════ -->
       <div class="spot-card">
         <h3><span class="emoji-section">🌊</span> Memorial Union — Where Work Breaks Turn into Mental Rest</h3>
         <p>Another place I enjoy is Memorial Union. It's more than a lakeside building — it's where I often take breaks from reading papers or writing. Sitting near the lake, watching people and boats, gives my mind space to breathe again.</p>
         <p>PhD life can sometimes feel like continuous problem-solving. But places like this remind me that clarity often comes when I pause, not when I push harder.</p>
       </div>
 
+      <div class="photo-label">📷 Memorial Union</div>
+      <div class="photo-single">
+        <div class="photo-item" onclick="openLb('images/blog/madison/memorial-union.jpg')">
+          <img src="images/blog/madison/memorial-union.jpg" alt="Memorial Union Madison — misty lake view"
+            onerror="this.parentElement.parentElement.style.display='none'">
+        </div>
+        <p class="photo-caption">Memorial Union — that misty morning on Lake Mendota</p>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           RAYMER'S COVE — 2 photos side by side
+           Upload to: images/blog/madison/
+           raymers-cove-1.jpg / raymers-cove-2.jpg
+      ══════════════════════════════════════ -->
       <div class="spot-card">
         <h3><span class="emoji-section">🌾</span> Raymer's Cove — Quiet Thinking Space for a Research Mind</h3>
         <p>One of the most peaceful hidden spots for me is Raymer's Cove. It's quiet, less crowded, and perfect for slow walks. I often go there when I need to think deeply — about research problems, writing structure, or just life in general.</p>
         <p>There is something about still water and open space that helps organize my thoughts better than sitting at a desk sometimes.</p>
+      </div>
+
+      <div class="photo-label">📷 Raymer's Cove</div>
+      <div class="photo-grid-2">
+        <div>
+          <div class="photo-item" onclick="openLb('images/blog/madison/raymers-cove-1.jpg')">
+            <img src="images/blog/madison/raymers-cove-1.jpg" alt="Raymer's Cove Madison"
+              onerror="this.parentElement.parentElement.style.display='none'">
+          </div>
+        </div>
       </div>
 
       <h2><span class="emoji-section">📚</span> PhD Life in Madison — A Balance Between Focus and Nature</h2>
@@ -105,6 +206,19 @@
     <a href="https://scholar.google.com/citations?user=gYFDPv8AAAAJ&hl=en" target="_blank">Google Scholar</a>
   </div>
 </footer>
+
 <script src="js/main.js"></script>
+<script>
+  function openLb(src) {
+    document.getElementById('lb-img').src = src;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLb() {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLb();
+  });
+</script>
 </body>
 </html>
