@@ -1,0 +1,440 @@
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  #canvas-wrap { width: 100%; height: 520px; background: #050d1f; position: relative; overflow: hidden; border-radius: 16px; }
+  canvas { position: absolute; top: 0; left: 0; }
+  #overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; z-index: 10; }
+  #overlay h1 { font-size: 28px; font-weight: 500; color: #fff; letter-spacing: -0.5px; margin-bottom: 6px; font-family: var(--font-sans); }
+  #overlay p { font-size: 13px; color: rgba(255,255,255,0.5); font-family: var(--font-sans); }
+  #mode-btns { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 20; }
+  .mode-btn {
+    font-size: 12px; font-family: var(--font-sans);
+    padding: 6px 14px; border-radius: 20px; border: 0.5px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.7);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .mode-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+  .mode-btn.active { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.5); }
+  #info-tag { position: absolute; top: 16px; right: 16px; z-index: 20; font-size: 11px; color: rgba(255,255,255,0.35); font-family: var(--font-sans); }
+</style>
+
+<div id="canvas-wrap">
+  <canvas id="bgCanvas"></canvas>
+  <canvas id="mainCanvas"></canvas>
+  <div id="overlay">
+    <h1>Jeevan Jayasuriya</h1>
+    <p>Neuroergonomics · Human Factors · Space Research</p>
+  </div>
+  <div id="mode-btns">
+    <button class="mode-btn active" onclick="setMode('space')">Astronaut</button>
+    <button class="mode-btn" onclick="setMode('fire')">Firefighter</button>
+    <button class="mode-btn" onclick="setMode('brain')">Neural</button>
+  </div>
+  <div id="info-tag">Interactive · click to interact</div>
+</div>
+
+<script>
+const wrap = document.getElementById('canvas-wrap');
+const bgC = document.getElementById('bgCanvas');
+const mc = document.getElementById('mainCanvas');
+const bgCtx = bgC.getContext('2d');
+const ctx = mc.getContext('2d');
+
+let W, H, mode = 'space', frame = 0, mouse = {x: -999, y: -999};
+let particles = [], figure = {x: 0, y: 0, vx: 0.3, vy: 0.15, angle: 0};
+let stars = [], brainNodes = [], brainEdges = [], signals = [];
+let flames = [], embers = [];
+
+function resize() {
+  W = wrap.clientWidth; H = wrap.clientHeight;
+  bgC.width = mc.width = W; bgC.height = mc.height = H;
+  figure.x = W / 2; figure.y = H / 2;
+  initStars(); initBrain(); initFire();
+}
+
+function initStars() {
+  stars = Array.from({length: 180}, () => ({
+    x: Math.random() * W, y: Math.random() * H,
+    r: Math.random() * 1.4 + 0.3,
+    alpha: Math.random() * 0.7 + 0.2,
+    twinkle: Math.random() * Math.PI * 2
+  }));
+}
+
+function initBrain() {
+  brainNodes = [];
+  const cx = W/2, cy = H/2;
+  for (let i = 0; i < 22; i++) {
+    const angle = (i / 22) * Math.PI * 2;
+    const r = 80 + Math.random() * 90;
+    brainNodes.push({
+      x: cx + Math.cos(angle) * r * (0.7 + Math.random() * 0.6),
+      y: cy + Math.sin(angle) * r * 0.65,
+      r: 4 + Math.random() * 5,
+      pulse: Math.random() * Math.PI * 2,
+      color: Math.random() > 0.5 ? '#4a9eff' : '#a78bfa'
+    });
+  }
+  brainEdges = [];
+  for (let i = 0; i < brainNodes.length; i++) {
+    const n = 2 + Math.floor(Math.random() * 3);
+    for (let j = 0; j < n; j++) {
+      const t = Math.floor(Math.random() * brainNodes.length);
+      if (t !== i) brainEdges.push([i, t]);
+    }
+  }
+  signals = [];
+}
+
+function initFire() {
+  flames = []; embers = [];
+}
+
+function spawnFlame(x, y) {
+  for (let i = 0; i < 3; i++) {
+    flames.push({
+      x: x + (Math.random()-0.5)*30,
+      y: y + 20,
+      vx: (Math.random()-0.5)*1.5,
+      vy: -(2 + Math.random()*3),
+      life: 1, decay: 0.012 + Math.random()*0.015,
+      size: 18 + Math.random()*22,
+      hue: 15 + Math.random()*30
+    });
+  }
+  for (let i = 0; i < 2; i++) {
+    embers.push({
+      x: x + (Math.random()-0.5)*20,
+      y: y,
+      vx: (Math.random()-0.5)*2.5,
+      vy: -(3 + Math.random()*4),
+      life: 1, decay: 0.02 + Math.random()*0.02,
+      size: 2 + Math.random()*3
+    });
+  }
+}
+
+function drawStars() {
+  bgCtx.clearRect(0, 0, W, H);
+  stars.forEach(s => {
+    s.twinkle += 0.02;
+    const a = s.alpha * (0.6 + 0.4 * Math.sin(s.twinkle));
+    bgCtx.beginPath();
+    bgCtx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    bgCtx.fillStyle = `rgba(255,255,255,${a})`;
+    bgCtx.fill();
+  });
+}
+
+function drawAstronaut(x, y, angle, scale=1) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.scale(scale, scale);
+
+  const suit = '#d0e4f5', dark = '#8ba8c2', visor = '#1a3a5c', gold = '#f5c842';
+
+  ctx.shadowColor = 'rgba(100,160,255,0.4)';
+  ctx.shadowBlur = 20;
+
+  ctx.fillStyle = suit;
+  ctx.beginPath(); ctx.ellipse(0, 8, 22, 28, 0, 0, Math.PI*2); ctx.fill();
+
+  ctx.fillStyle = dark;
+  ctx.beginPath(); ctx.ellipse(0, 8, 22, 28, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = suit;
+  ctx.beginPath(); ctx.ellipse(0, 6, 20, 26, 0, 0, Math.PI*2); ctx.fill();
+
+  ctx.fillStyle = suit;
+  ctx.beginPath(); ctx.ellipse(0, -18, 15, 15, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = visor;
+  ctx.beginPath(); ctx.ellipse(0, -18, 10, 10, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = gold;
+  ctx.beginPath(); ctx.ellipse(0, -18, 9, 9, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = 'rgba(100,200,255,0.5)';
+  ctx.beginPath(); ctx.arc(-3, -20, 4, 0, Math.PI*2); ctx.fill();
+
+  ctx.fillStyle = suit;
+  ctx.beginPath(); ctx.ellipse(-28, 2, 8, 16, -0.4, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(28, 2, 8, 16, 0.4, 0, Math.PI*2); ctx.fill();
+
+  ctx.fillStyle = suit;
+  ctx.beginPath(); ctx.ellipse(-12, 32, 9, 14, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(12, 32, 9, 14, 0, 0, Math.PI*2); ctx.fill();
+
+  ctx.fillStyle = '#e84040';
+  ctx.beginPath(); ctx.roundRect(-8, -4, 16, 10, 3); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.fillRect(-5, -1, 10, 1.5); ctx.fillRect(-5, 2, 10, 1.5);
+
+  ctx.shadowBlur = 0;
+  ctx.restore();
+}
+
+function drawFirefighter(x, y, angle, scale=1) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.scale(scale, scale);
+
+  ctx.shadowColor = 'rgba(255,100,20,0.5)';
+  ctx.shadowBlur = 25;
+
+  ctx.fillStyle = '#f5a623';
+  ctx.beginPath(); ctx.ellipse(0, -24, 14, 10, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#d4860e';
+  ctx.beginPath(); ctx.ellipse(0, -28, 12, 6, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#333';
+  ctx.beginPath(); ctx.arc(0, -22, 10, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#555';
+  ctx.beginPath(); ctx.ellipse(0, -22, 8, 8, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = 'rgba(200,230,255,0.6)';
+  ctx.beginPath(); ctx.arc(-2, -24, 4, 0, Math.PI*2); ctx.fill();
+
+  ctx.fillStyle = '#cc2200';
+  ctx.beginPath(); ctx.roundRect(-18, -12, 36, 36, 4); ctx.fill();
+  ctx.fillStyle = '#ffdd00';
+  ctx.fillRect(-18, -3, 36, 5); ctx.fillRect(-18, 8, 36, 5);
+
+  ctx.fillStyle = '#cc2200';
+  ctx.beginPath(); ctx.ellipse(-24, 2, 8, 14, -0.3, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(24, 2, 8, 14, 0.3, 0, Math.PI*2); ctx.fill();
+
+  ctx.fillStyle = '#cc2200';
+  ctx.beginPath(); ctx.roundRect(-20, 24, 16, 26, 4); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(4, 24, 16, 26, 4); ctx.fill();
+  ctx.fillStyle = '#333';
+  ctx.beginPath(); ctx.roundRect(-20, 44, 16, 8, 3); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(4, 44, 16, 8, 3); ctx.fill();
+
+  ctx.fillStyle = '#888';
+  ctx.fillRect(26, -6, 6, 20);
+  ctx.beginPath(); ctx.moveTo(32,-6); ctx.lineTo(50,-14); ctx.lineTo(52,-10); ctx.lineTo(34,-2); ctx.closePath();
+  ctx.fillStyle='#aaa'; ctx.fill();
+
+  ctx.shadowBlur = 0;
+  ctx.restore();
+}
+
+function drawNeuralFigure(x, y) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = 'rgba(100,160,255,0.15)';
+  ctx.beginPath(); ctx.ellipse(0, 0, 55, 55, 0, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = 'rgba(100,160,255,0.4)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.ellipse(0, 0, 55, 55, 0, 0, Math.PI*2); ctx.stroke();
+
+  ctx.fillStyle = 'rgba(167,139,250,0.3)';
+  ctx.beginPath(); ctx.ellipse(0, -10, 36, 38, 0, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = 'rgba(167,139,250,0.6)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.ellipse(0, -10, 36, 38, 0, 0, Math.PI*2); ctx.stroke();
+
+  for (let i = 0; i < 8; i++) {
+    const a = (i/8)*Math.PI*2 + frame*0.01;
+    const r = 30 + Math.sin(frame*0.05+i)*5;
+    const nx = Math.cos(a)*r, ny = Math.sin(a)*r*0.7 - 10;
+    ctx.beginPath(); ctx.arc(nx, ny, 3, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(167,139,250,${0.5+0.5*Math.sin(frame*0.05+i)})`;
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+function spawnSignal() {
+  if (Math.random() < 0.08 && brainEdges.length) {
+    const e = brainEdges[Math.floor(Math.random()*brainEdges.length)];
+    signals.push({from: e[0], to: e[1], t: 0, speed: 0.012 + Math.random()*0.015});
+  }
+}
+
+function drawBrainMode() {
+  ctx.clearRect(0, 0, W, H);
+
+  brainEdges.forEach(([a,b]) => {
+    const na = brainNodes[a], nb = brainNodes[b];
+    ctx.beginPath(); ctx.moveTo(na.x, na.y); ctx.lineTo(nb.x, nb.y);
+    ctx.strokeStyle = 'rgba(74,158,255,0.12)'; ctx.lineWidth = 0.8; ctx.stroke();
+  });
+
+  spawnSignal();
+  signals = signals.filter(s => {
+    s.t += s.speed;
+    if (s.t > 1) return false;
+    const na = brainNodes[s.from], nb = brainNodes[s.to];
+    const sx = na.x + (nb.x - na.x)*s.t, sy = na.y + (nb.y - na.y)*s.t;
+    ctx.beginPath(); ctx.arc(sx, sy, 3, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(100,200,255,0.9)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(sx, sy, 7, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(100,200,255,0.15)'; ctx.fill();
+    return true;
+  });
+
+  brainNodes.forEach(n => {
+    n.pulse += 0.04;
+    const pr = n.r * (1 + 0.2 * Math.sin(n.pulse));
+    const dm = Math.hypot(mouse.x-n.x, mouse.y-n.y);
+    const boost = dm < 80 ? (1 - dm/80)*1.5 : 0;
+    ctx.beginPath(); ctx.arc(n.x, n.y, pr + boost*3, 0, Math.PI*2);
+    ctx.fillStyle = n.color + (boost > 0 ? 'ff' : '99'); ctx.fill();
+    if (boost > 0) {
+      ctx.beginPath(); ctx.arc(n.x, n.y, pr + boost*8, 0, Math.PI*2);
+      ctx.fillStyle = n.color + '22'; ctx.fill();
+    }
+  });
+
+  drawNeuralFigure(W/2, H/2);
+
+  const dm = Math.hypot(mouse.x - W/2, mouse.y - H/2);
+  if (dm < 150) {
+    brainNodes.forEach(n => {
+      const dist = Math.hypot(mouse.x - n.x, mouse.y - n.y);
+      if (dist < 100 && Math.random() < 0.02) {
+        signals.push({from: brainNodes.indexOf(n), to: Math.floor(Math.random()*brainNodes.length), t:0, speed:0.025});
+      }
+    });
+  }
+}
+
+function drawSpaceMode() {
+  ctx.clearRect(0, 0, W, H);
+
+  figure.x += figure.vx; figure.y += figure.vy;
+  figure.angle += 0.003;
+  if (figure.x < 60 || figure.x > W-60) figure.vx *= -1;
+  if (figure.y < 80 || figure.y > H-80) figure.vy *= -1;
+
+  const dm = Math.hypot(mouse.x - figure.x, mouse.y - figure.y);
+  if (dm < 120) {
+    const ang = Math.atan2(figure.y - mouse.y, figure.x - mouse.x);
+    figure.vx += Math.cos(ang)*0.08; figure.vy += Math.sin(ang)*0.08;
+    const spd = Math.hypot(figure.vx, figure.vy);
+    if (spd > 3) { figure.vx *= 3/spd; figure.vy *= 3/spd; }
+  }
+
+  if (frame % 4 === 0) {
+    particles.push({
+      x: figure.x + (Math.random()-0.5)*20,
+      y: figure.y + (Math.random()-0.5)*20,
+      vx: (Math.random()-0.5)*0.5,
+      vy: (Math.random()-0.5)*0.5,
+      life: 1, r: 1.5 + Math.random()*2,
+      color: Math.random() > 0.5 ? 'rgba(100,200,255,' : 'rgba(200,160,255,'
+    });
+  }
+  particles = particles.filter(p => {
+    p.life -= 0.015; p.x += p.vx; p.y += p.vy;
+    if (p.life <= 0) return false;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r*p.life, 0, Math.PI*2);
+    ctx.fillStyle = p.color + (p.life*0.6) + ')'; ctx.fill();
+    return true;
+  });
+
+  const bob = Math.sin(frame * 0.04) * 6;
+  drawAstronaut(figure.x, figure.y + bob, figure.angle);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 0.5; ctx.setLineDash([4,6]);
+  ctx.beginPath();
+  ctx.arc(figure.x, figure.y, 65, 0, Math.PI*2); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawFireMode() {
+  ctx.clearRect(0, 0, W, H);
+
+  const cx = W/2, cy = H*0.55;
+
+  if (frame % 3 === 0) spawnFlame(cx, cy);
+
+  flames = flames.filter(f => {
+    f.life -= f.decay; f.x += f.vx; f.y += f.vy;
+    f.vx += (Math.random()-0.5)*0.3; f.vy -= 0.05;
+    if (f.life <= 0) return false;
+    const grad = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.size*f.life);
+    grad.addColorStop(0, `hsla(${f.hue+20},100%,80%,${f.life*0.9})`);
+    grad.addColorStop(0.4, `hsla(${f.hue},100%,55%,${f.life*0.7})`);
+    grad.addColorStop(1, `hsla(${f.hue-10},80%,30%,0)`);
+    ctx.beginPath(); ctx.arc(f.x, f.y, f.size*f.life, 0, Math.PI*2);
+    ctx.fillStyle = grad; ctx.fill();
+    return true;
+  });
+
+  embers = embers.filter(e => {
+    e.life -= e.decay; e.x += e.vx; e.y += e.vy;
+    e.vy += 0.05; e.vx *= 0.99;
+    if (e.life <= 0) return false;
+    ctx.beginPath(); ctx.arc(e.x, e.y, e.size*e.life, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(255,180,50,${e.life*0.9})`; ctx.fill();
+    return true;
+  });
+
+  if (mouse.x > 0 && Math.random() < 0.4) {
+    spawnFlame(mouse.x + (Math.random()-0.5)*20, mouse.y);
+  }
+
+  const bob = Math.sin(frame*0.05)*4;
+  drawFirefighter(cx, cy + bob, Math.sin(frame*0.02)*0.05);
+
+  ctx.strokeStyle='rgba(255,200,50,0.15)'; ctx.lineWidth=1; ctx.setLineDash([3,5]);
+  ctx.beginPath(); ctx.moveTo(cx-80, cy+55); ctx.lineTo(cx+80, cy+55); ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle='rgba(255,200,80,0.7)';
+  ctx.font='11px var(--font-sans)'; ctx.textAlign='center';
+  ctx.fillText('move cursor to add flames', cx, H-20);
+}
+
+function setMode(m) {
+  mode = m;
+  particles = []; flames = []; embers = []; signals = [];
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  if (m === 'space') { figure.x = W/2; figure.y = H/2; }
+  if (m === 'brain') initBrain();
+}
+
+function animate() {
+  frame++;
+  if (mode === 'space') { drawStars(); drawSpaceMode(); }
+  else if (mode === 'brain') {
+    bgCtx.clearRect(0,0,W,H);
+    bgCtx.fillStyle='#0a0520'; bgCtx.fillRect(0,0,W,H);
+    drawStars(); drawBrainMode();
+  }
+  else if (mode === 'fire') {
+    bgCtx.clearRect(0,0,W,H);
+    bgCtx.fillStyle='#0d0704'; bgCtx.fillRect(0,0,W,H);
+    drawFireMode();
+  }
+  requestAnimationFrame(animate);
+}
+
+mc.addEventListener('mousemove', e => {
+  const r = mc.getBoundingClientRect();
+  mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+});
+mc.addEventListener('mouseleave', () => { mouse.x = -999; mouse.y = -999; });
+mc.addEventListener('click', e => {
+  const r = mc.getBoundingClientRect();
+  const mx = e.clientX - r.left, my = e.clientY - r.top;
+  if (mode === 'space') {
+    for(let i=0;i<12;i++) particles.push({
+      x:mx, y:my, vx:(Math.random()-0.5)*4, vy:(Math.random()-0.5)*4,
+      life:1, r:2+Math.random()*3, color:'rgba(100,220,255,'
+    });
+  }
+  if (mode === 'brain') {
+    brainNodes.push({x:mx, y:my, r:5+Math.random()*4, pulse:0, color:'#4a9eff'});
+    for(let i=0;i<3;i++) {
+      const t=Math.floor(Math.random()*brainNodes.length);
+      brainEdges.push([brainNodes.length-1, t]);
+    }
+  }
+});
+
+resize();
+window.addEventListener('resize', resize);
+animate();
+</script>
